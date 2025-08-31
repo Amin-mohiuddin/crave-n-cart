@@ -23,7 +23,7 @@ const Home = () => {
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
           <h1 className="text-5xl md:text-7xl font-bold mb-6">
             <span className="bg-gradient-secondary bg-clip-text text-transparent">
-              I Love
+              I ❤️
             </span>{" "}
             <span className="text-foreground">Burgers</span>
           </h1>
@@ -90,9 +90,9 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6">About I Love Burgers</h2>
+              <h2 className="text-4xl font-bold mb-6">About I ❤️ Burgers</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                Since our inception, I Love Burgers has been dedicated to serving 
+                Since our inception, I ❤️ Burgers has been dedicated to serving 
                 the most delicious and satisfying fast food experience. Our commitment 
                 to quality ingredients, authentic flavors, and exceptional service 
                 has made us a favorite destination for food lovers.

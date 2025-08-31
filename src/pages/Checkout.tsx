@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Phone, User, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, User, Mail, Clock, Plus, Minus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface OrderItem {
@@ -18,7 +18,7 @@ interface OrderItem {
 
 const Checkout = () => {
   const { toast } = useToast();
-  const [orderItems] = useState<OrderItem[]>([
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([
     { id: "1", name: "Crispy Chicken Burger", price: 180, quantity: 2 },
     { id: "8", name: "Broasted Fried Chicken - 2 Piece", price: 180, quantity: 1 },
     { id: "13", name: "Imitation Crab Claw Amritsari", price: 200, quantity: 1 },
@@ -44,6 +44,22 @@ const Checkout = () => {
       ...prev,
       [field]: value
     }));
+  };
+
+  const updateQuantity = (itemId: string, change: number) => {
+    setOrderItems(prev => 
+      prev.map(item => {
+        if (item.id === itemId) {
+          const newQuantity = item.quantity + change;
+          return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
+        }
+        return item;
+      }).filter(item => item.quantity > 0)
+    );
+  };
+
+  const removeItem = (itemId: string) => {
+    setOrderItems(prev => prev.filter(item => item.id !== itemId));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,12 +121,43 @@ const Checkout = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {orderItems.map((item) => (
-                  <div key={item.id} className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h4 className="font-medium">{item.name}</h4>
-                      <p className="text-sm text-muted-foreground">Qty: {item.quantity}</p>
+                  <div key={item.id} className="space-y-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h4 className="font-medium">{item.name}</h4>
+                        <p className="text-sm text-muted-foreground">₹{item.price} each</p>
+                      </div>
+                      <span className="font-semibold">₹{item.price * item.quantity}</span>
                     </div>
-                    <span className="font-semibold">₹{item.price * item.quantity}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => updateQuantity(item.id, -1)}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="font-medium min-w-[2rem] text-center">{item.quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => updateQuantity(item.id, 1)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => removeItem(item.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
                 

@@ -17,7 +17,7 @@ export const menuItems: MenuItem[] = [
     description: "Crispy fried chicken breast with fresh lettuce, tomato, and special sauce",
     price: 180,
     category: "Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/hero-burger.jpg",
     isPopular: true,
   },
   {
@@ -69,7 +69,7 @@ export const menuItems: MenuItem[] = [
     description: "Double layered vegetarian burger with crispy patties",
     price: 200,
     category: "Double Decker Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/double-decker-burger.jpg",
   },
   {
     id: "8",
@@ -136,7 +136,7 @@ export const menuItems: MenuItem[] = [
     description: "Two pieces of crispy golden fried chicken with bun",
     price: 180,
     category: "Broasted Fried Chicken",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/broasted-chicken.jpg",
     isPopular: true,
   },
   {
@@ -179,7 +179,7 @@ export const menuItems: MenuItem[] = [
     description: "Soft buffalo chicken boneless pieces (6 pieces)",
     price: 240,
     category: "Spicy Grabs",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/buffalo-wings.jpg",
   },
   {
     id: "21",
@@ -285,7 +285,7 @@ export const menuItems: MenuItem[] = [
     description: "Golden fried crab claw imitation with special spices (6 pieces)",
     price: 200,
     category: "Finger Foods",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/crab-claw.jpg",
     isNew: true,
   },
   {
@@ -377,7 +377,7 @@ export const menuItems: MenuItem[] = [
     description: "Grilled mutton patty wrapped in fresh lettuce leaves",
     price: 240,
     category: "Fitness Food",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/fitness-food.jpg",
   },
   {
     id: "45",
