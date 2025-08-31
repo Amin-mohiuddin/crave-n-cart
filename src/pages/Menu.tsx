@@ -4,14 +4,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { menuItems, categories, MenuItem } from "@/data/menuData";
-import friedChickenImage from "@/assets/fried-chicken.jpg";
+import friedChickenImage from "@/assets/crispy-chicken-burger.jpg";
 
 const Menu = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("name");
   const [cart, setCart] = useState<{ [key: string]: number }>({});
 
-  const filteredItems = menuItems.filter(item => 
+  const filteredItems = menuItems.filter(item =>
     selectedCategory === "All" || item.category === selectedCategory
   );
 
@@ -24,6 +24,12 @@ const Menu = () => {
       case "name":
       default:
         return a.name.localeCompare(b.name);
+    }
+  });
+  
+  sortedItems.map(item => {
+    if (item.image.startsWith("/api/placeholder")) {
+      item.image = friedChickenImage;
     }
   });
 
@@ -82,7 +88,7 @@ const Menu = () => {
               </Button>
             ))}
           </div>
-          
+
           <div className="flex gap-4 items-center">
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-48">
@@ -94,7 +100,7 @@ const Menu = () => {
                 <SelectItem value="price-high">Price (High to Low)</SelectItem>
               </SelectContent>
             </Select>
-            
+
             {getCartItemCount() > 0 && (
               <div className="bg-primary text-primary-foreground px-4 py-2 rounded-lg">
                 Cart: {getCartItemCount()} items - ₹{getCartTotal()}
@@ -108,8 +114,8 @@ const Menu = () => {
           {sortedItems.map((item) => (
             <Card key={item.id} className="overflow-hidden shadow-card border-border/50 hover:shadow-glow transition-all duration-300">
               <div className="aspect-video bg-muted relative">
-                <img 
-                  src={friedChickenImage} 
+                <img
+                  src={item.image}
                   alt={item.name}
                   className="w-full h-full object-cover"
                 />
@@ -126,7 +132,7 @@ const Menu = () => {
                   )}
                 </div>
               </div>
-              
+
               <CardContent className="p-4">
                 <div className="mb-3">
                   <h3 className="font-semibold text-lg mb-1 line-clamp-1">{item.name}</h3>
@@ -145,8 +151,8 @@ const Menu = () => {
                 <div className="flex items-center gap-2">
                   {cart[item.id] > 0 ? (
                     <div className="flex items-center gap-2 flex-1">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => removeFromCart(item.id)}
                         className="h-8 w-8 p-0"
@@ -156,8 +162,8 @@ const Menu = () => {
                       <span className="font-semibold min-w-[2rem] text-center">
                         {cart[item.id]}
                       </span>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => addToCart(item.id)}
                         className="h-8 w-8 p-0"
@@ -166,9 +172,9 @@ const Menu = () => {
                       </Button>
                     </div>
                   ) : (
-                    <Button 
-                      variant="menu" 
-                      size="sm" 
+                    <Button
+                      variant="menu"
+                      size="sm"
                       className="flex-1"
                       onClick={() => addToCart(item.id)}
                     >
