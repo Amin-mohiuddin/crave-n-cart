@@ -17,7 +17,7 @@ export const menuItems: MenuItem[] = [
     description: "Crispy fried chicken breast with fresh lettuce, tomato, and special sauce",
     price: 180,
     category: "Burgers",
-    image: "/src/assets/hero-burger.jpg",
+    image: "/src/assets/crispy-chicken-burger.jpg",
     isPopular: true,
   },
   {
@@ -26,7 +26,7 @@ export const menuItems: MenuItem[] = [
     description: "Spiced paneer patty with fresh vegetables and mint chutney",
     price: 180,
     category: "Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/spicy-paneer-burger.jpg",
   },
   {
     id: "3",
@@ -34,7 +34,7 @@ export const menuItems: MenuItem[] = [
     description: "Crispy fish fillet with tartar sauce and fresh lettuce",
     price: 200,
     category: "Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/fish-burger.jpg",
   },
   {
     id: "4",
@@ -42,7 +42,7 @@ export const menuItems: MenuItem[] = [
     description: "Golden fried shrimp with special mayo and crisp lettuce",
     price: 200,
     category: "Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/shrimp-burger.jpg",
   },
   {
     id: "5",
@@ -50,7 +50,7 @@ export const menuItems: MenuItem[] = [
     description: "Juicy beef patty with cheese, lettuce, tomato, and special sauce",
     price: 180,
     category: "Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/classic-beef-burger.jpg",
     isPopular: true,
   },
   {
@@ -59,7 +59,7 @@ export const menuItems: MenuItem[] = [
     description: "Grilled chicken steak with fresh vegetables and sauce",
     price: 180,
     category: "Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/chicken-steak-burger.jpg",
   },
 
   // Double Decker Burgers
@@ -69,7 +69,7 @@ export const menuItems: MenuItem[] = [
     description: "Double layered vegetarian burger with crispy patties",
     price: 200,
     category: "Double Decker Burgers",
-    image: "/src/assets/double-decker-burger.jpg",
+    image: "/src/assets/crispy-veg-double-decker.jpg",
   },
   {
     id: "8",
@@ -77,7 +77,7 @@ export const menuItems: MenuItem[] = [
     description: "Two spiced paneer patties with double cheese and sauce",
     price: 280,
     category: "Double Decker Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/spicy-paneer-double-decker.jpg",
   },
   {
     id: "9",
@@ -85,7 +85,7 @@ export const menuItems: MenuItem[] = [
     description: "Two beef patties with double cheese and signature sauce",
     price: 280,
     category: "Double Decker Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/classic-double-decker.jpg",
   },
   {
     id: "10",
@@ -93,7 +93,7 @@ export const menuItems: MenuItem[] = [
     description: "Double crispy chicken patties with special sauce",
     price: 300,
     category: "Double Decker Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/crispy-chicken-double-decker.jpg",
   },
   {
     id: "11",
@@ -101,7 +101,7 @@ export const menuItems: MenuItem[] = [
     description: "Premium mutton patties with herbs and spicy sauce",
     price: 440,
     category: "Double Decker Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/mutton-double-decker.jpg",
   },
   {
     id: "12",
@@ -109,7 +109,7 @@ export const menuItems: MenuItem[] = [
     description: "Two grilled chicken steaks with double cheese",
     price: 280,
     category: "Double Decker Burgers",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/chicken-steak-double-decker.jpg",
   },
   {
     id: "13",
@@ -219,7 +219,7 @@ export const menuItems: MenuItem[] = [
     description: "Crispy chicken burger with buffalo sauce",
     price: 250,
     category: "Spicy Grabs",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/buffalo-crispy-burger.jpg",
   },
   {
     id: "26",
@@ -227,7 +227,7 @@ export const menuItems: MenuItem[] = [
     description: "Shrimp burger with spicy buffalo sauce",
     price: 260,
     category: "Spicy Grabs",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/buffalo-shrimp-burger.jpg",
   },
   {
     id: "27",
@@ -235,7 +235,7 @@ export const menuItems: MenuItem[] = [
     description: "Steak burger with buffalo seasoning",
     price: 220,
     category: "Spicy Grabs",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/buffalo-steak-burger.jpg",
   },
   {
     id: "28",
@@ -243,7 +243,7 @@ export const menuItems: MenuItem[] = [
     description: "Classic beef burger with buffalo sauce",
     price: 220,
     category: "Spicy Grabs",
-    image: "/api/placeholder/300/250",
+    image: "/src/assets/buffalo-classic-burger.jpg",
   },
   {
     id: "29",

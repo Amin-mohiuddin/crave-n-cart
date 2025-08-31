@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import heroImage from "@/assets/hero-burger.jpg";
+import heroImage from "@/assets/crispy-chicken-burger.jpg";
 import friedChickenImage from "@/assets/fried-chicken.jpg";
 import foodAssortmentImage from "@/assets/food-assortment.jpg";
 import { menuItems } from "@/data/menuData";
