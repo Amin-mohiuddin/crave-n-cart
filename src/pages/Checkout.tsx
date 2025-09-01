@@ -4,9 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import GMap from "@/components/GoogleMaps";
+const API_KEY = 'AIzaSyCMiFdECLHlcBIMWz81GSzzxmfEHo4Gjug'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Phone, User, Mail, Clock, Plus, Minus, Trash2 } from "lucide-react";
+import {
+  MapPin,
+  Phone,
+  User,
+  Mail,
+  Clock,
+  Plus,
+  Minus,
+  Trash2,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface OrderItem {
@@ -20,8 +38,18 @@ const Checkout = () => {
   const { toast } = useToast();
   const [orderItems, setOrderItems] = useState<OrderItem[]>([
     { id: "1", name: "Crispy Chicken Burger", price: 180, quantity: 2 },
-    { id: "8", name: "Broasted Fried Chicken - 2 Piece", price: 180, quantity: 1 },
-    { id: "13", name: "Imitation Crab Claw Amritsari", price: 200, quantity: 1 },
+    {
+      id: "8",
+      name: "Broasted Fried Chicken - 2 Piece",
+      price: 180,
+      quantity: 1,
+    },
+    {
+      id: "13",
+      name: "Imitation Crab Claw Amritsari",
+      price: 200,
+      quantity: 1,
+    },
   ]);
 
   const [formData, setFormData] = useState({
@@ -35,55 +63,62 @@ const Checkout = () => {
     specialInstructions: "",
   });
 
-  const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const deliveryFee = 50;
   const total = subtotal + deliveryFee;
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const updateQuantity = (itemId: string, change: number) => {
-    setOrderItems(prev => 
-      prev.map(item => {
-        if (item.id === itemId) {
-          const newQuantity = item.quantity + change;
-          return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
-        }
-        return item;
-      }).filter(item => item.quantity > 0)
+    setOrderItems((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === itemId) {
+            const newQuantity = item.quantity + change;
+            return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0)
     );
   };
 
   const removeItem = (itemId: string) => {
-    setOrderItems(prev => prev.filter(item => item.id !== itemId));
+    setOrderItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate required fields
-    const required = ['name', 'phone', 'address', 'city', 'paymentMethod'];
-    const missing = required.filter(field => !formData[field as keyof typeof formData]);
-    
-    if (missing.length > 0) {
-      toast({
-        title: "Please fill all required fields",
-        description: `Missing: ${missing.join(', ')}`,
-        variant: "destructive",
-      });
-      return;
-    }
+    // const required = ["name", "phone", "address", "city", "paymentMethod"];
+    // const missing = required.filter(
+    //   (field) => !formData[field as keyof typeof formData]
+    // );
+
+    // if (missing.length > 0) {
+    //   toast({
+    //     title: "Please fill all required fields",
+    //     description: `Missing: ${missing.join(", ")}`,
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
 
     // Simulate order submission
     toast({
       title: "Order Placed Successfully!",
       description: `Your order will be delivered in 30-45 minutes. Order total: ₹${total}`,
     });
-    
+
     // Reset form
     setFormData({
       name: "",
@@ -106,7 +141,9 @@ const Checkout = () => {
               Checkout
             </span>
           </h1>
-          <p className="text-muted-foreground">Complete your order and get delicious food delivered</p>
+          <p className="text-muted-foreground">
+            Complete your order and get delicious food delivered
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -125,9 +162,13 @@ const Checkout = () => {
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <h4 className="font-medium">{item.name}</h4>
-                        <p className="text-sm text-muted-foreground">₹{item.price} each</p>
+                        <p className="text-sm text-muted-foreground">
+                          ₹{item.price} each
+                        </p>
                       </div>
-                      <span className="font-semibold">₹{item.price * item.quantity}</span>
+                      <span className="font-semibold">
+                        ₹{item.price * item.quantity}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -139,7 +180,9 @@ const Checkout = () => {
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="font-medium min-w-[2rem] text-center">{item.quantity}</span>
+                        <span className="font-medium min-w-[2rem] text-center">
+                          {item.quantity}
+                        </span>
                         <Button
                           variant="outline"
                           size="icon"
@@ -160,9 +203,9 @@ const Checkout = () => {
                     </div>
                   </div>
                 ))}
-                
+
                 <Separator />
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
@@ -178,7 +221,7 @@ const Checkout = () => {
                     <span className="text-secondary">₹{total}</span>
                   </div>
                 </div>
-                
+
                 <div className="bg-muted p-3 rounded-lg">
                   <p className="text-sm text-center">
                     <Clock className="w-4 h-4 inline mr-1" />
@@ -210,14 +253,19 @@ const Checkout = () => {
                       <Input
                         id="name"
                         value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("name", e.target.value)
+                        }
                         placeholder="Enter your full name"
                         className="bg-muted border-border"
                       />
                     </div>
-                    
+
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="flex items-center gap-2">
+                      <Label
+                        htmlFor="email"
+                        className="flex items-center gap-2"
+                      >
                         <Mail className="w-4 h-4" />
                         Email
                       </Label>
@@ -225,7 +273,9 @@ const Checkout = () => {
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("email", e.target.value)
+                        }
                         placeholder="Enter your email"
                         className="bg-muted border-border"
                       />
@@ -240,7 +290,9 @@ const Checkout = () => {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
                       placeholder="Enter your phone number"
                       className="bg-muted border-border"
                     />
@@ -252,37 +304,43 @@ const Checkout = () => {
                       <MapPin className="w-5 h-5 text-secondary" />
                       Delivery Address
                     </h3>
-                    
+                    <GMap/>
                     <div className="space-y-2">
                       <Label htmlFor="address">Street Address *</Label>
                       <Textarea
                         id="address"
                         value={formData.address}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("address", e.target.value)
+                        }
                         placeholder="Enter your complete address"
                         className="bg-muted border-border"
                         rows={3}
                       />
                     </div>
-                    
+
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="city">City *</Label>
                         <Input
                           id="city"
                           value={formData.city}
-                          onChange={(e) => handleInputChange('city', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("city", e.target.value)
+                          }
                           placeholder="Enter your city"
                           className="bg-muted border-border"
                         />
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor="pincode">PIN Code</Label>
                         <Input
                           id="pincode"
                           value={formData.pincode}
-                          onChange={(e) => handleInputChange('pincode', e.target.value)}
+                          onChange={(e) =>
+                            handleInputChange("pincode", e.target.value)
+                          }
                           placeholder="Enter PIN code"
                           className="bg-muted border-border"
                         />
@@ -293,7 +351,12 @@ const Checkout = () => {
                   {/* Payment Method */}
                   <div className="space-y-2">
                     <Label>Payment Method *</Label>
-                    <Select value={formData.paymentMethod} onValueChange={(value) => handleInputChange('paymentMethod', value)}>
+                    <Select
+                      value={formData.paymentMethod}
+                      onValueChange={(value) =>
+                        handleInputChange("paymentMethod", value)
+                      }
+                    >
                       <SelectTrigger className="bg-muted border-border">
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
@@ -312,7 +375,9 @@ const Checkout = () => {
                     <Textarea
                       id="instructions"
                       value={formData.specialInstructions}
-                      onChange={(e) => handleInputChange('specialInstructions', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("specialInstructions", e.target.value)
+                      }
                       placeholder="Any special instructions for your order (optional)"
                       className="bg-muted border-border"
                       rows={2}
@@ -330,7 +395,8 @@ const Checkout = () => {
                   </Button>
 
                   <p className="text-sm text-muted-foreground text-center">
-                    By placing this order, you agree to our terms and conditions.
+                    By placing this order, you agree to our terms and
+                    conditions.
                   </p>
                 </form>
               </CardContent>
