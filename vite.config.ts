@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    allowedHosts: [
+      "indie-terrace-expansion-settle.trycloudflare.com", // your cloudflare tunnel domain
+    ],
   },
   plugins: [
     react(),
