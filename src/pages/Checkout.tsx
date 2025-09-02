@@ -244,7 +244,6 @@ const Checkout = () => {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Personal Information */}
-                  <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="flex items-center gap-2">
                         <User className="w-4 h-4" />
@@ -260,27 +259,6 @@ const Checkout = () => {
                         className="bg-muted border-border"
                       />
                     </div>
-
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="email"
-                        className="flex items-center gap-2"
-                      >
-                        <Mail className="w-4 h-4" />
-                        Email
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) =>
-                          handleInputChange("email", e.target.value)
-                        }
-                        placeholder="Enter your email"
-                        className="bg-muted border-border"
-                      />
-                    </div>
-                  </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center gap-2">
@@ -318,34 +296,6 @@ const Checkout = () => {
                         rows={3}
                       />
                     </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="city">City *</Label>
-                        <Input
-                          id="city"
-                          value={formData.city}
-                          onChange={(e) =>
-                            handleInputChange("city", e.target.value)
-                          }
-                          placeholder="Enter your city"
-                          className="bg-muted border-border"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="pincode">PIN Code</Label>
-                        <Input
-                          id="pincode"
-                          value={formData.pincode}
-                          onChange={(e) =>
-                            handleInputChange("pincode", e.target.value)
-                          }
-                          placeholder="Enter PIN code"
-                          className="bg-muted border-border"
-                        />
-                      </div>
-                    </div>
                   </div>
 
                   {/* Payment Method */}
@@ -361,10 +311,8 @@ const Checkout = () => {
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="cash">Cash on Delivery</SelectItem>
                         <SelectItem value="upi">UPI Payment</SelectItem>
-                        <SelectItem value="card">Credit/Debit Card</SelectItem>
-                        <SelectItem value="netbanking">Net Banking</SelectItem>
+                        <SelectItem value="half">Pay half amount upi now and remaining at Delivery</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

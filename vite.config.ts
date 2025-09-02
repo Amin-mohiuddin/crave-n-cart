@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    allowedHosts: [
+      "invention-bow-pre-proposed.trycloudflare.com", // your cloudflare tunnel domain
+    ],
   },
   plugins: [
     react(),
