@@ -109,7 +109,7 @@ export default function Checkout() {
           </Card>
         );
       case 3:
-        return <Cart />;
+        return <Cart deliveryFee={parseFloat(distance) * 20}/>;
       default:
         return null;
     }

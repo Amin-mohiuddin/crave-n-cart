@@ -22,22 +22,17 @@ interface OrderItem {
   quantity: number;
 }
 
-const Cart = () => {
+// ✅ Cart props interface
+interface CartProps {
+  deliveryFee: number;
+}
+
+const Cart = ({ deliveryFee }: CartProps) => {
   const { toast } = useToast();
   const [orderItems, setOrderItems] = useState<OrderItem[]>([
     { id: "1", name: "Crispy Chicken Burger", price: 180, quantity: 2 },
-    {
-      id: "8",
-      name: "Broasted Fried Chicken - 2 Piece",
-      price: 180,
-      quantity: 1,
-    },
-    {
-      id: "13",
-      name: "Imitation Crab Claw Amritsari",
-      price: 200,
-      quantity: 1,
-    },
+    { id: "8", name: "Broasted Fried Chicken - 2 Piece", price: 180, quantity: 1 },
+    { id: "13", name: "Imitation Crab Claw Amritsari", price: 200, quantity: 1 },
   ]);
 
   const [formData, setFormData] = useState({
@@ -49,26 +44,20 @@ const Cart = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const deliveryFee = 100;
   const total = subtotal + deliveryFee;
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const updateQuantity = (itemId: string, change: number) => {
     setOrderItems((prev) =>
       prev
-        .map((item) => {
-          if (item.id === itemId) {
-            const newQuantity = item.quantity + change;
-            return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
-          }
-          return item;
-        })
+        .map((item) =>
+          item.id === itemId
+            ? { ...item, quantity: Math.max(0, item.quantity + change) }
+            : item
+        )
         .filter((item) => item.quantity > 0)
     );
   };
@@ -79,14 +68,11 @@ const Cart = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Simulate order submission
     toast({
       title: "Order Placed Successfully!",
       description: `Your order will be delivered in 30-45 minutes. Order total: ₹${total}`,
     });
 
-    // Reset form
     setFormData({
       paymentMethod: "",
       specialInstructions: "",
@@ -157,7 +143,6 @@ const Cart = () => {
                 </div>
               </CardContent>
             </Card>
-
             {/* Special Instructions */}
             <Card className="shadow-card border-border/50">
               <CardHeader>
@@ -174,30 +159,27 @@ const Cart = () => {
                 />
               </CardContent>
             </Card>
-
             {/* Payment Method */}
             <Card className="shadow-card border-border/50">
               <CardHeader>
                 <CardTitle>Payment Method</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <Select
-                    value={formData.paymentMethod}
-                    onValueChange={(value) =>
-                      handleInputChange("paymentMethod", value)
-                    }
-                  >
-                    <SelectTrigger className="bg-muted border-border">
-                      <SelectValue placeholder="Select payment method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cod">Cash on Delivery</SelectItem>
-                      <SelectItem value="card">Credit/Debit Card</SelectItem>
-                      <SelectItem value="upi">UPI Payment</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select
+                  value={formData.paymentMethod}
+                  onValueChange={(value) =>
+                    handleInputChange("paymentMethod", value)
+                  }
+                >
+                  <SelectTrigger className="bg-muted border-border">
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cod">Cash on Delivery</SelectItem>
+                    <SelectItem value="card">Credit/Debit Card</SelectItem>
+                    <SelectItem value="upi">UPI Payment</SelectItem>
+                  </SelectContent>
+                </Select>
               </CardContent>
             </Card>
           </div>
