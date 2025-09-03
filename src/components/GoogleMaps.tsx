@@ -106,10 +106,6 @@ const GMap = forwardRef(function GMap({ onDistanceCalculated }: Props, ref) {
             const distanceText = element.distance?.text || "";
             const durationText = element.duration?.text || "";
 
-            alert(
-              `Google Maps Link: ${googleMapsLink}\nDistance: ${distanceText}\nETA: ${durationText}`
-            );
-
             if (onDistanceCalculated) {
               onDistanceCalculated(distanceText);
             }
@@ -121,6 +117,8 @@ const GMap = forwardRef(function GMap({ onDistanceCalculated }: Props, ref) {
         }
       }
     );
+    console.log('in googlemaps submit');
+    
   };
 
   // Expose handleSubmit to parent via ref

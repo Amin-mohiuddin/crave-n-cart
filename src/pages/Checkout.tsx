@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import CustomerDetails from "@/components/CustomerDetails";
 import GMap from "@/components/GoogleMaps";
 import Cart from "@/components/Cart";
+import { log } from "console";
 
 interface FormData {
   name: string;
@@ -47,6 +48,7 @@ export default function Checkout() {
       });
       return;
     }
+    console.log(formData);
     setCurrentStep(2);
   };
 
@@ -55,6 +57,7 @@ export default function Checkout() {
       mapRef.current.handleSubmit();
       setCurrentStep(3);
     }
+    console.log("joojo");
   };
 
   const handleDistanceCalculated = (distance: string) => {
@@ -97,7 +100,7 @@ export default function Checkout() {
                   onDistanceCalculated={handleDistanceCalculated}
                 />
                 <div className="flex justify-end">
-                  <Button onClick={() => setCurrentStep(3)}>
+                  <Button onClick={() => handleMapSubmit()}>
                     Continue to Payment
                   </Button>
                 </div>
@@ -155,13 +158,25 @@ export default function Checkout() {
             ))}
           </div>
           <div className="flex justify-between mt-2 text-sm">
-            <span className={currentStep >= 1 ? "font-medium" : "text-muted-foreground"}>
+            <span
+              className={
+                currentStep >= 1 ? "font-medium" : "text-muted-foreground"
+              }
+            >
               Details
             </span>
-            <span className={currentStep >= 2 ? "font-medium" : "text-muted-foreground"}>
+            <span
+              className={
+                currentStep >= 2 ? "font-medium" : "text-muted-foreground"
+              }
+            >
               Location
             </span>
-            <span className={currentStep >= 3 ? "font-medium" : "text-muted-foreground"}>
+            <span
+              className={
+                currentStep >= 3 ? "font-medium" : "text-muted-foreground"
+              }
+            >
               Payment
             </span>
           </div>
@@ -178,11 +193,7 @@ export default function Checkout() {
               >
                 Back
               </Button>
-              {currentStep < 3 ? (
-                <Button onClick={() => setCurrentStep((prev) => prev + 1)}>
-                  Continue
-                </Button>
-              ) : (
+              {currentStep == 3 && (
                 <Button onClick={handlePlaceOrder} disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>

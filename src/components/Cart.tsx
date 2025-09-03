@@ -49,7 +49,7 @@ const Cart = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const deliveryFee = 50;
+  const deliveryFee = 100;
   const total = subtotal + deliveryFee;
 
   const handleInputChange = (field: string, value: string) => {
@@ -95,7 +95,7 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Order Summary */}
           <div className="space-y-6">
@@ -121,7 +121,7 @@ const Cart = () => {
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
+                        <span className="text-center">{item.quantity}</span>
                         <Button
                           variant="outline"
                           size="sm"
