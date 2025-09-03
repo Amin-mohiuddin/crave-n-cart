@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     allowedHosts: [
-      "indie-terrace-expansion-settle.trycloudflare.com", // your cloudflare tunnel domain
+      "helena-coupons-ended-shipped.trycloudflare.com", // your cloudflare tunnel domain
     ],
   },
   plugins: [
