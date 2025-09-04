@@ -14,6 +14,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Plus, Minus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { menuItems, categories, MenuItem } from "@/data/menuData";
+
+function getItemPriceById(id: string): number | undefined {
+  const item = menuItems.find(menuItem => menuItem.id === id);
+  return item?.price;
+}
 
 interface OrderItem {
   id: string;
@@ -25,15 +31,31 @@ interface OrderItem {
 // ✅ Cart props interface
 interface CartProps {
   deliveryFee: number;
+  cart: { [key: string]: number };
 }
 
-const Cart = ({ deliveryFee }: CartProps) => {
+const Cart = ({ deliveryFee, cart }: CartProps) => {
   const { toast } = useToast();
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([
-    { id: "1", name: "Crispy Chicken Burger", price: 180, quantity: 2 },
-    { id: "8", name: "Broasted Fried Chicken - 2 Piece", price: 180, quantity: 1 },
-    { id: "13", name: "Imitation Crab Claw Amritsari", price: 200, quantity: 1 },
-  ]);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>(() => {
+    // Convert cart object to order items array
+    return Object.entries(cart)
+      .filter(([_, quantity]) => quantity > 0)
+      .map(([id, quantity]) => {
+        // You'll need to get the menu item details from your menu data
+        // This is a placeholder - you'll need to import and use your actual menu data
+        const menuItem = {
+          id,
+          name: `Item ${id}`, // Replace with actual item name lookup
+          price: getItemPriceById(id), // Replace with actual price lookup
+        };
+        return {
+          id,
+          name: menuItem.name,
+          price: menuItem.price,
+          quantity,
+        };
+      });
+  });
 
   const [formData, setFormData] = useState({
     paymentMethod: "",

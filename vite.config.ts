@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     allowedHosts: [
-      "helena-coupons-ended-shipped.trycloudflare.com", // your cloudflare tunnel domain
+      "somalia-advantages-pursue-facial.trycloudflare.com", // your cloudflare tunnel domain
     ],
   },
   plugins: [

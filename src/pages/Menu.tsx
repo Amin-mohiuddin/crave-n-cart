@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,6 +8,7 @@ import { menuItems, categories, MenuItem } from "@/data/menuData";
 import friedChickenImage from "@/assets/crispy-chicken-burger.jpg";
 
 const Menu = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("name");
   const [cart, setCart] = useState<{ [key: string]: number }>({});
@@ -56,6 +58,10 @@ const Menu = () => {
 
   const getCartItemCount = () => {
     return Object.values(cart).reduce((total, quantity) => total + quantity, 0);
+  };
+
+  const handleCheckout = () => {
+    navigate('/checkout', { state: { cart } });
   };
 
   return (
@@ -196,10 +202,13 @@ const Menu = () => {
         {/* Checkout Button */}
         {getCartItemCount() > 0 && (
           <div className="fixed bottom-6 right-6 z-50">
-            <Button variant="hero" size="lg" asChild>
-              <a href="/checkout">
-                Checkout ({getCartItemCount()}) - ₹{getCartTotal()}
-              </a>
+            <Button 
+              className="w-full mt-4" 
+              size="lg"
+              onClick={handleCheckout}
+              disabled={getCartItemCount() === 0}
+            >
+              Proceed to Checkout
             </Button>
           </div>
         )}

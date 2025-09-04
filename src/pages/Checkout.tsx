@@ -7,6 +7,7 @@ import CustomerDetails from "@/components/CustomerDetails";
 import GMap from "@/components/GoogleMaps";
 import Cart from "@/components/Cart";
 import { log } from "console";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface FormData {
   name: string;
@@ -14,6 +15,10 @@ interface FormData {
   address: string;
   city: string;
   pincode: string;
+}
+
+interface LocationState {
+  cart: { [key: string]: number };
 }
 
 export default function Checkout() {
@@ -29,6 +34,14 @@ export default function Checkout() {
     city: "",
     pincode: "",
   });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { cart = {} } = (location.state as LocationState) || {};
+
+  if (Object.keys(cart).length === 0) {
+    navigate('/menu');
+    return null;
+  }
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -39,7 +52,6 @@ export default function Checkout() {
 
   const handleCustomerDetailsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // ✅ validate before proceeding
     if (!formData.name || !formData.phone) {
       toast({
         title: "Missing details",
@@ -57,7 +69,6 @@ export default function Checkout() {
       mapRef.current.handleSubmit();
       setCurrentStep(3);
     }
-    console.log("joojo");
   };
 
   const handleDistanceCalculated = (distance: string) => {
@@ -73,6 +84,8 @@ export default function Checkout() {
         description: "Your order has been placed and will be delivered soon.",
       });
     }, 1500);
+    console.log(formData);
+    
   };
 
   const renderStep = () => {
@@ -109,7 +122,7 @@ export default function Checkout() {
           </Card>
         );
       case 3:
-        return <Cart deliveryFee={parseFloat(distance) * 20}/>;
+        return <Cart cart={cart} deliveryFee={parseFloat(distance) * 20}/>;
       default:
         return null;
     }
