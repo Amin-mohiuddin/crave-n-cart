@@ -15,9 +15,9 @@ import { Separator } from "@/components/ui/separator";
 import { Plus, Minus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { menuItems, categories, MenuItem } from "@/data/menuData";
-
+import { useEffect } from "react";
 function getItemPriceById(id: string): number | undefined {
-  const item = menuItems.find(menuItem => menuItem.id === id);
+  const item = menuItems.find((menuItem) => menuItem.id === id);
   return item?.price;
 }
 
@@ -32,30 +32,29 @@ interface OrderItem {
 interface CartProps {
   deliveryFee: number;
   cart: { [key: string]: number };
+  onCartChange?: (items: OrderItem[]) => void; // 👈 callback
 }
 
-const Cart = ({ deliveryFee, cart }: CartProps) => {
+const Cart = ({ deliveryFee, cart, onCartChange }: CartProps) => {
   const { toast } = useToast();
-  const [orderItems, setOrderItems] = useState<OrderItem[]>(() => {
-    // Convert cart object to order items array
-    return Object.entries(cart)
+  const [orderItems, setOrderItems] = useState<OrderItem[]>(() =>
+    Object.entries(cart)
       .filter(([_, quantity]) => quantity > 0)
       .map(([id, quantity]) => {
-        // You'll need to get the menu item details from your menu data
-        // This is a placeholder - you'll need to import and use your actual menu data
-        const menuItem = {
-          id,
-          name: `Item ${id}`, // Replace with actual item name lookup
-          price: getItemPriceById(id), // Replace with actual price lookup
-        };
+        const menuItem = menuItems.find((item) => item.id === id);
         return {
           id,
-          name: menuItem.name,
-          price: menuItem.price,
+          name: menuItem?.name || `Item ${id}`,
+          price: menuItem?.price ?? 0,
           quantity,
         };
-      });
-  });
+      })
+  );
+  useEffect(() => {
+    if (onCartChange) {
+      onCartChange(orderItems);
+    }
+  }, [orderItems, onCartChange]);
 
   const [formData, setFormData] = useState({
     paymentMethod: "",
@@ -114,7 +113,10 @@ const Cart = ({ deliveryFee, cart }: CartProps) => {
               <CardContent>
                 <div className="space-y-4">
                   {orderItems.map((item) => (
-                    <div key={item.id} className="flex justify-between items-center">
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-center"
+                    >
                       <div>
                         <p className="font-medium">{item.name}</p>
                         <p className="text-sm text-muted-foreground">
