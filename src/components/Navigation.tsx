@@ -2,10 +2,13 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ShoppingCart } from "lucide-react";
+import { useCart } from "@/components/CartContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+    const { cart, cartItems, addToCart, removeFromCart } = useCart();
+  
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -13,6 +16,9 @@ const Navigation = () => {
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
+
+  const getCartItemCount = () =>
+    cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -38,12 +44,14 @@ const Navigation = () => {
                 {link.label}
               </Link>
             ))}
-            <Button variant="order" size="sm" asChild>
+
+            {getCartItemCount() > 0 && (<Button variant="order" size="sm" asChild>
               <Link to="/checkout">
                 <ShoppingCart className="w-4 h-4" />
                 Order Now
               </Link>
             </Button>
+            )}
           </div>
 
           {/* Mobile menu button */}

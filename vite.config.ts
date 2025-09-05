@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     allowedHosts: [
-      "invention-bow-pre-proposed.trycloudflare.com", // your cloudflare tunnel domain
+      "awareness-slovakia-assistant-albania.trycloudflare.com", // your cloudflare tunnel domain
     ],
   },
   plugins: [

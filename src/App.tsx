@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
+import { CartProvider } from "./components/CartContext";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <CartProvider> 
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -27,6 +29,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

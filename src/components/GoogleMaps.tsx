@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
-export default function GMap() {
+interface GMapProps {
+  onLocationSubmit?: (data: {
+    googleMapsLink: string;
+    distance: string;
+    duration: string;
+    deliveryFee?: number;
+    position: { lat: number; lng: number };
+  }) => void;
+}
+
+export default function GMap({ onLocationSubmit }: GMapProps) {
   const defaultPosition = { lat: 17.335109, lng: 78 };
   const burgerShop = { lat: 17.3817077, lng: 78.4217834 };
 
@@ -82,12 +92,16 @@ export default function GMap() {
         if (status === "OK" && response) {
           const element = response.rows[0].elements[0];
           if (element.status === "OK") {
-            const distanceText = element.distance?.text;
-            const durationText = element.duration?.text;
-
-            alert(
-              `Google Maps Link: ${googleMapsLink}\nDistance: ${distanceText}\nETA: ${durationText}`
-            );
+            const distanceText = element.distance?.text || "N/A";
+            const durationText = element.duration?.text || "N/A";
+            const dFee = 5 * (element.distance?.value || 0) / 1000; // Example: $5 per km
+            onLocationSubmit?.({
+              googleMapsLink,
+              distance: distanceText,
+              duration: durationText,
+              deliveryFee: dFee,
+              position,
+            });
 
             console.log("Google Maps Link:", googleMapsLink);
             console.log("Distance:", distanceText);
@@ -135,21 +149,23 @@ export default function GMap() {
         {/* Controls */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
           <button
+            type="button"
             onClick={recenter}
             className="px-4 py-2 rounded-xl bg-black text-white shadow-md"
           >
             My Location
           </button>
           <button
+            type="button"
             onClick={toggleLock}
-            className={`px-4 py-2 rounded-xl ${
-              locked ? "bg-red-600" : "bg-green-600"
-            } text-white shadow-md`}
+            className={`px-4 py-2 rounded-xl ${locked ? "bg-red-600" : "bg-green-600"
+              } text-white shadow-md`}
           >
             {locked ? "Unlock" : "Lock"}
           </button>
           {locked && (
             <button
+              type="button"
               onClick={handleSubmit}
               className="px-4 py-2 rounded-xl bg-blue-600 text-white shadow-md"
             >

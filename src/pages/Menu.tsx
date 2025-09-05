@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { menuItems, categories, MenuItem } from "@/data/menuData";
+import { menuItems, categories } from "@/data/menuData";
 import friedChickenImage from "@/assets/crispy-chicken-burger.jpg";
+import { useCart } from "@/components/CartContext";
+import { Link } from "react-router-dom";
 
 const Menu = () => {
+  const { cart, cartItems, addToCart, removeFromCart } = useCart();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("name");
-  const [cart, setCart] = useState<{ [key: string]: number }>({});
 
-  const filteredItems = menuItems.filter(item =>
-    selectedCategory === "All" || item.category === selectedCategory
+  const filteredItems = menuItems.filter(
+    (item) => selectedCategory === "All" || item.category === selectedCategory
   );
 
   const sortedItems = [...filteredItems].sort((a, b) => {
@@ -26,37 +34,24 @@ const Menu = () => {
         return a.name.localeCompare(b.name);
     }
   });
-  
-  sortedItems.map(item => {
+
+  sortedItems.forEach((item) => {
     if (item.image.startsWith("/api/placeholder")) {
       item.image = friedChickenImage;
     }
   });
 
-  const addToCart = (itemId: string) => {
-    setCart(prev => ({
-      ...prev,
-      [itemId]: (prev[itemId] || 0) + 1
-    }));
-  };
+  const getCartTotal = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const removeFromCart = (itemId: string) => {
-    setCart(prev => ({
-      ...prev,
-      [itemId]: Math.max(0, (prev[itemId] || 0) - 1)
-    }));
-  };
+  const getCartItemCount = () =>
+    cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  const getCartTotal = () => {
-    return Object.entries(cart).reduce((total, [itemId, quantity]) => {
-      const item = menuItems.find(item => item.id === itemId);
-      return total + (item ? item.price * quantity : 0);
-    }, 0);
-  };
-
-  const getCartItemCount = () => {
-    return Object.values(cart).reduce((total, quantity) => total + quantity, 0);
-  };
+  // 🟢 Log cart state whenever it changes
+  useEffect(() => {
+    console.log("Raw cart object:", cart);
+    console.log("Cart items array:", cartItems);
+  }, [cart, cartItems]);
 
   return (
     <div className="min-h-screen pt-20">
@@ -69,7 +64,7 @@ const Menu = () => {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Discover our delicious selection of burgers, fried chicken, finger foods, and fitness options
+            Discover our delicious selection
           </p>
         </div>
 
@@ -82,7 +77,6 @@ const Menu = () => {
                 variant={selectedCategory === category ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedCategory(category)}
-                className="transition-all duration-200"
               >
                 {category}
               </Button>
@@ -109,11 +103,11 @@ const Menu = () => {
           </div>
         </div>
 
-        {/* Menu Items Grid */}
+        {/* Menu Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {sortedItems.map((item) => (
-            <Card key={item.id} className="overflow-hidden shadow-card border-border/50 hover:shadow-glow transition-all duration-300">
-              <div className="aspect-video bg-muted relative">
+            <Card key={item.id} className="overflow-hidden">
+              <div className="aspect-video relative">
                 <img
                   src={item.image}
                   alt={item.name}
@@ -121,33 +115,21 @@ const Menu = () => {
                 />
                 <div className="absolute top-3 left-3 flex gap-2">
                   {item.isPopular && (
-                    <Badge className="bg-secondary text-secondary-foreground">
-                      ⭐ Popular
-                    </Badge>
+                    <Badge className="bg-secondary">⭐ Popular</Badge>
                   )}
-                  {item.isNew && (
-                    <Badge className="bg-accent text-accent-foreground">
-                      🆕 New
-                    </Badge>
-                  )}
+                  {item.isNew && <Badge className="bg-accent">🆕 New</Badge>}
                 </div>
               </div>
 
               <CardContent className="p-4">
-                <div className="mb-3">
-                  <h3 className="font-semibold text-lg mb-1 line-clamp-1">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                    {item.description}
-                  </p>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    Category: {item.category}
-                  </div>
-                </div>
-                
+                <h3 className="font-semibold text-lg mb-1">{item.name}</h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {item.description}
+                </p>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xl font-bold text-secondary">₹{item.price}</span>
+                  <span className="text-xl font-bold">₹{item.price}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   {cart[item.id] > 0 ? (
                     <div className="flex items-center gap-2 flex-1">
@@ -155,18 +137,14 @@ const Menu = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => removeFromCart(item.id)}
-                        className="h-8 w-8 p-0"
                       >
                         -
                       </Button>
-                      <span className="font-semibold min-w-[2rem] text-center">
-                        {cart[item.id]}
-                      </span>
+                      <span>{cart[item.id]}</span>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => addToCart(item.id)}
-                        className="h-8 w-8 p-0"
                       >
                         +
                       </Button>
@@ -187,19 +165,13 @@ const Menu = () => {
           ))}
         </div>
 
-        {sortedItems.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-xl text-muted-foreground">No items found in this category.</p>
-          </div>
-        )}
-
         {/* Checkout Button */}
         {getCartItemCount() > 0 && (
           <div className="fixed bottom-6 right-6 z-50">
             <Button variant="hero" size="lg" asChild>
-              <a href="/checkout">
+              <Link to="/checkout">
                 Checkout ({getCartItemCount()}) - ₹{getCartTotal()}
-              </a>
+              </Link>
             </Button>
           </div>
         )}

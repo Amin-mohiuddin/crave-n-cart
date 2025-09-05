@@ -4,9 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import GMap from "@/components/GoogleMaps";
-const API_KEY = 'AIzaSyCMiFdECLHlcBIMWz81GSzzxmfEHo4Gjug'
+import { useCart } from "../components/CartContext";
 import {
   Select,
   SelectContent,
@@ -19,7 +18,6 @@ import {
   MapPin,
   Phone,
   User,
-  Mail,
   Clock,
   Plus,
   Minus,
@@ -27,30 +25,18 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface OrderItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
 const Checkout = () => {
+  const { cartItems, addToCart, removeFromCart, clearCart } = useCart();
   const { toast } = useToast();
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([
-    { id: "1", name: "Crispy Chicken Burger", price: 180, quantity: 2 },
-    {
-      id: "8",
-      name: "Broasted Fried Chicken - 2 Piece",
-      price: 180,
-      quantity: 1,
-    },
-    {
-      id: "13",
-      name: "Imitation Crab Claw Amritsari",
-      price: 200,
-      quantity: 1,
-    },
-  ]);
+
+  const [deliveryFee, setDeliveryFee] = useState(0);
+  const [mapDetails, setMapDetails] = useState<{
+    googleMapsLink: string;
+    distance: string;
+    duration: string;
+    deliveryFee?: number;
+    position: { lat: number; lng: number };
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -63,11 +49,14 @@ const Checkout = () => {
     specialInstructions: "",
   });
 
+  // Always get fresh items from context
+  const orderItems = cartItems;
+  console.log("Order Items:", orderItems);
+
   const subtotal = orderItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const deliveryFee = 50;
   const total = subtotal + deliveryFee;
 
   const handleInputChange = (field: string, value: string) => {
@@ -78,48 +67,75 @@ const Checkout = () => {
   };
 
   const updateQuantity = (itemId: string, change: number) => {
-    setOrderItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === itemId) {
-            const newQuantity = item.quantity + change;
-            return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0)
-    );
+    if (change > 0) {
+      addToCart(itemId);
+    } else {
+      removeFromCart(itemId);
+    }
   };
 
   const removeItem = (itemId: string) => {
-    setOrderItems((prev) => prev.filter((item) => item.id !== itemId));
+    // Keep removing until item gone
+    const item = orderItems.find((i) => i.id === itemId);
+    if (!item) return;
+    for (let i = 0; i < item.quantity; i++) {
+      removeFromCart(itemId);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate required fields
-    // const required = ["name", "phone", "address", "city", "paymentMethod"];
-    // const missing = required.filter(
-    //   (field) => !formData[field as keyof typeof formData]
-    // );
+    if (!mapDetails) {
+      toast({
+        title: "Please confirm delivery location",
+        description: "Lock and submit your location on the map.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    // if (missing.length > 0) {
-    //   toast({
-    //     title: "Please fill all required fields",
-    //     description: `Missing: ${missing.join(", ")}`,
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
+    const orderSummary = orderItems
+      .map(
+        (item) =>
+          `${item.name} (x${item.quantity}) - ₹${item.price * item.quantity}`
+      )
+      .join("\n");
 
-    // Simulate order submission
+    const message = `
+📦 *New Order Received* 📦
+
+👤 Name: ${formData.name}
+📞 Phone: ${formData.phone}
+📍 Address: ${formData.address}, ${formData.city} - ${formData.pincode}
+
+🗺️ Google Maps: ${mapDetails.googleMapsLink}
+🚗 Distance: ${mapDetails.distance}
+⏱️ Duration: ${mapDetails.duration}
+
+🛒 *Order Items:*
+${orderSummary}
+
+💰 Subtotal: ₹${subtotal}
+🚚 Delivery Fee: ₹${deliveryFee}
+--------------------------------
+🟢 *Total: ₹${total}*
+
+💳 Payment Method: ${formData.paymentMethod}
+📝 Instructions: ${formData.specialInstructions || "N/A"}
+`;
+
+    const whatsappNumber = "918639675595";
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+    window.open(whatsappURL, "_blank");
+
     toast({
       title: "Order Placed Successfully!",
-      description: `Your order will be delivered in 30-45 minutes. Order total: ₹${total}`,
+      description: `Your order has been sent to WhatsApp. Total: ₹${total}`,
     });
 
-    // Reset form
     setFormData({
       name: "",
       email: "",
@@ -157,77 +173,85 @@ const Checkout = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {orderItems.map((item) => (
-                  <div key={item.id} className="space-y-2">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h4 className="font-medium">{item.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          ₹{item.price} each
-                        </p>
-                      </div>
-                      <span className="font-semibold">
-                        ₹{item.price * item.quantity}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, -1)}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <span className="font-medium min-w-[2rem] text-center">
-                          {item.quantity}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, 1)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => removeItem(item.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Delivery Fee</span>
-                    <span>₹{deliveryFee}</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between font-bold text-lg">
-                    <span>Total</span>
-                    <span className="text-secondary">₹{total}</span>
-                  </div>
-                </div>
-
-                <div className="bg-muted p-3 rounded-lg">
-                  <p className="text-sm text-center">
-                    <Clock className="w-4 h-4 inline mr-1" />
-                    Estimated delivery: 30-45 minutes
+                {orderItems.length === 0 ? (
+                  <p className="text-muted-foreground text-center">
+                    Your cart is empty.
                   </p>
-                </div>
+                ) : (
+                  orderItems.map((item) => (
+                    <div key={item.id} className="space-y-2">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{item.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            ₹{item.price} each
+                          </p>
+                        </div>
+                        <span className="font-semibold">
+                          ₹{item.price * item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => updateQuantity(item.id, -1)}
+                          >
+                            <Minus className="h-4 w-4" />
+                          </Button>
+                          <span className="font-medium min-w-[2rem] text-center">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => updateQuantity(item.id, 1)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => removeItem(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+
+                {orderItems.length > 0 && (
+                  <>
+                    <Separator />
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Subtotal</span>
+                        <span>₹{subtotal}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Delivery Fee</span>
+                        <span>₹{deliveryFee}</span>
+                      </div>
+                      <Separator />
+                      <div className="flex justify-between font-bold text-lg">
+                        <span>Total</span>
+                        <span className="text-secondary">₹{total}</span>
+                      </div>
+                    </div>
+                    <div className="bg-muted p-3 rounded-lg">
+                      <p className="text-sm text-center">
+                        <Clock className="w-4 h-4 inline mr-1" />
+                        Estimated delivery: 30-45 minutes
+                      </p>
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -244,21 +268,21 @@ const Checkout = () => {
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Personal Information */}
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Full Name *
-                      </Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) =>
-                          handleInputChange("name", e.target.value)
-                        }
-                        placeholder="Enter your full name"
-                        className="bg-muted border-border"
-                      />
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
+                      placeholder="Enter your full name"
+                      className="bg-muted border-border"
+                    />
+                  </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="phone" className="flex items-center gap-2">
@@ -282,7 +306,14 @@ const Checkout = () => {
                       <MapPin className="w-5 h-5 text-secondary" />
                       Delivery Address
                     </h3>
-                    <GMap/>
+                    <GMap
+                      onLocationSubmit={(data) => {
+                        setMapDetails(data);
+                        if (data?.deliveryFee) {
+                          setDeliveryFee(data.deliveryFee);
+                        }
+                      }}
+                    />
                     <div className="space-y-2">
                       <Label htmlFor="address">Street Address *</Label>
                       <Textarea
@@ -312,7 +343,9 @@ const Checkout = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="upi">UPI Payment</SelectItem>
-                        <SelectItem value="half">Pay half amount upi now and remaining at Delivery</SelectItem>
+                        <SelectItem value="half">
+                          Pay half now, rest on delivery
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -326,7 +359,7 @@ const Checkout = () => {
                       onChange={(e) =>
                         handleInputChange("specialInstructions", e.target.value)
                       }
-                      placeholder="Any special instructions for your order (optional)"
+                      placeholder="Any special instructions (optional)"
                       className="bg-muted border-border"
                       rows={2}
                     />
