@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     allowedHosts: [
-      "awareness-slovakia-assistant-albania.trycloudflare.com", // your cloudflare tunnel domain
+      "utilization-cancel-sustainability-competitions.trycloudflare.com", // your cloudflare tunnel domain
     ],
   },
   plugins: [

@@ -2,11 +2,21 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import heroImage from "@/assets/crispy-chicken-burger.jpg";
-import friedChickenImage from "@/assets/fried-chicken.jpg";
 import foodAssortmentImage from "@/assets/food-assortment.jpg";
 import { menuItems } from "@/data/menuData";
+import { useCart } from "@/components/CartContext";
+
 const Home = () => {
+  const { cart, cartItems, addToCart, removeFromCart } = useCart();
+
   const popularItems = menuItems.filter((item) => item.isPopular).slice(0, 3);
+
+  // ✅ Helpers for cart total & item count
+  const getCartTotal = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const getCartItemCount = () =>
+    cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div className="min-h-screen">
@@ -37,7 +47,7 @@ const Home = () => {
               <Link to="/menu">Explore Menu</Link>
             </Button>
             <Button variant="outline" size="hero" asChild>
-              <Link to="/checkout">Order Now</Link>
+              <Link to="/menu">Order Now</Link>
             </Button>
           </div>
         </div>
@@ -78,9 +88,35 @@ const Home = () => {
                     <span className="text-2xl font-bold text-secondary">
                       ₹{item.price}
                     </span>
-                    <Button variant="menu" size="sm">
-                      Add to Cart
-                    </Button>
+
+                    {/* Add to Cart Controls */}
+                    {cart[item.id] > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeFromCart(item.id)}
+                        >
+                          -
+                        </Button>
+                        <span className="font-semibold">{cart[item.id]}</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addToCart(item.id)}
+                        >
+                          +
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="menu"
+                        size="sm"
+                        onClick={() => addToCart(item.id)}
+                      >
+                        Add to Cart
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -128,6 +164,17 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* ✅ Floating Checkout Button */}
+      {getCartItemCount() > 0 && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button variant="hero" size="lg" asChild>
+            <Link to="/checkout">
+              Checkout ({getCartItemCount()}) - ₹{getCartTotal()}
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
