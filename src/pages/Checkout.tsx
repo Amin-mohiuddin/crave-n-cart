@@ -98,7 +98,6 @@ export default function Checkout() {
       const formData = new FormData();
       formData.append("file", paymentFile);
 
-      
       const response = await fetch(`${import.meta.env.VITE_BE_URL}/upload/`, {
         method: "POST",
         body: formData,
